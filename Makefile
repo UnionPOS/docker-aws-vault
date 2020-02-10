@@ -1,5 +1,7 @@
 export DOCKER_ORG ?= unionpos
-export DOCKER_IMAGE ?= $(DOCKER_ORG)/aws-vault
+export IMAGE_NAME ?= aws-vault
+
+export DOCKER_IMAGE ?= $(DOCKER_ORG)/$(IMAGE_NAME)
 export DOCKER_TAG ?= 5.2.0
 export DOCKER_IMAGE_NAME ?= $(DOCKER_IMAGE):$(DOCKER_TAG)
 export DOCKER_BUILD_FLAGS =
@@ -13,10 +15,14 @@ build: docker/build
 docs: readme/deps readme
 .PHONY: docs
 
+push:
+	$(DOCKER) push $(DOCKER_IMAGE_NAME)
+.PHONY: push
+
 run:
-	docker container run --rm --attach STDOUT ${DOCKER_IMAGE_NAME}
+	$(DOCKER) container run --rm --attach STDOUT ${DOCKER_IMAGE_NAME}
 .PHONY: run
 
 it:
-	docker run -it ${DOCKER_IMAGE_NAME} /bin/bash
+	$(DOCKER) run -it ${DOCKER_IMAGE_NAME} /bin/bash
 .PHONY: it
